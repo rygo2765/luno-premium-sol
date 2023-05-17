@@ -4,10 +4,6 @@ import readline from 'readline'
 import dotenv from "dotenv";
 dotenv.config();
 
-let crypto;
-let lunoPrice;
-let convRate;
-let binancePrice;
 let i = 1;
 
 //Use readline module to create interface allowing user to input data in terminal
@@ -17,14 +13,14 @@ const rl = readline.createInterface({
 });
 
 //Retrieve the price of a cryptocurrency on Luno
-async function fetchLunoPrice(crypto) {
-  let cryptoName;
-  if (crypto === "BTC") {
-    cryptoName = "XBT";
+async function fetchLunoPrice(symbol) {
+  let symbolFormatted;
+  if (symbol === "BTC") {
+    symbolFormatted = "XBT";
   } else {
-    cryptoName = crypto;
+    symbolFormatted = symbol;
   }
-  const res = await fetch(`https://api.luno.com/api/1/ticker?pair=${cryptoName}MYR`);
+  const res = await fetch(`https://api.luno.com/api/1/ticker?pair=${symbolFormatted}MYR`);
   const data = await res.json();
   return data.last_trade;
 }
@@ -57,17 +53,17 @@ async function fetchBinancePrice(crypto) {
 //Calculate the premium for a given cryptocurrency
 async function calculatePremium(crypto) {
   try {
-    lunoPrice = await fetchLunoPrice(crypto);
+    const lunoPrice = await fetchLunoPrice(crypto);
     console.log(`Luno price for ${crypto} in MYR:`.padEnd(30),"MYR",lunoPrice);
 
-    convRate = await fetchConv();
+    const convRate = await fetchConv();
     console.log("USDMYR:".padEnd(34), convRate);
 
     //Convert Luno Price from MYR to USD
     const lunoUsdPrice = lunoPrice / convRate;
     console.log(`Luno price for ${crypto} in USD:`.padEnd(30),"USD",lunoUsdPrice);
 
-    binancePrice = await fetchBinancePrice(crypto);
+    const binancePrice = await fetchBinancePrice(crypto);
     console.log(`Binance price for ${crypto} in USD:`.padEnd(30),"USD",binancePrice);
 
     const priceDiff = Math.abs(lunoUsdPrice - binancePrice);
@@ -83,12 +79,12 @@ async function calculatePremium(crypto) {
 }
 
 rl.question("Enter a cryptocurrency: ", async function (answer) {
-  crypto = answer.toUpperCase();
+  const crypto = answer.toUpperCase();
+
   while (true) {
     console.log(`Fetching data for ${crypto}...`)
     await calculatePremium(crypto);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     i++
   }
-  rl.close();
 });

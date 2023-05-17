@@ -5,7 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "dotenv node index.js",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
