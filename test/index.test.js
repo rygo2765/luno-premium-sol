@@ -5,7 +5,7 @@ beforeEach(() => {
   import calc from "../lib/calculations.js";
   
   test("Shows premium in console if all good", async () => {
-    const {calculatePremium} = require("../index.js");
+    const {calculatePremium} = require("../lib/main.js");
   
     //Mock Luno Price
     const MOCK_LUNO_PRICE = 91000;
